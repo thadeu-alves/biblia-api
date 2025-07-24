@@ -5,10 +5,16 @@ export class DataService {
     private data: Book[] | null = null;
 
     async loadData(): Promise<Book[]> {
-        if (this.data) return this.data;
+        try {
+            if (this.data) return this.data;
 
-        this.data = await readDataFile();
+            this.data = await readDataFile();
 
-        return this.data;
+            return this.data;
+        } catch (err) {
+            console.error(err);
+
+            throw new Error("Failed to load data");
+        }
     }
 }
