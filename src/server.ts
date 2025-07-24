@@ -1,5 +1,6 @@
 import fastify from "fastify";
 import fastifyCors from "@fastify/cors";
+import { routes } from "./routes";
 
 const app = fastify({
     logger: true,
@@ -11,9 +12,7 @@ app.register(fastifyCors, {
     allowedHeaders: ["Content-Type", "Authorization"],
 });
 
-app.get("/", async (request, reply) => {
-    return { hello: "world" };
-});
+app.register(routes);
 
 const start = async () => {
     try {
