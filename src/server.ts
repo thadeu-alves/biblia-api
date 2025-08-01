@@ -26,6 +26,16 @@ const start = async () => {
     }
 };
 
+export default async (req: any, res: any) => {
+    try {
+        await app.ready();
+        app.server.emit("request", req, res);
+    } catch (err) {
+        console.error("Erro na função:", err);
+        res.status(500).send("Internal Server Error");
+    }
+};
+
 if (process.env.NODE_ENV !== "production") {
     start();
 }
