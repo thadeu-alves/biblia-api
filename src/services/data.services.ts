@@ -33,4 +33,25 @@ export class DataService {
             throw new Error("Erro ao procurar livro");
         }
     }
+
+    async getBooksAbrev(): Promise<
+        Pick<Book, "abrev" | "id" | "nome">[]
+    > {
+        try {
+            this.data = await this.loadData();
+            const filtered = this.data.map(
+                ({ abrev, id, nome }) => ({
+                    abrev,
+                    id,
+                    nome,
+                })
+            );
+
+            return filtered;
+        } catch (err) {
+            console.error(err);
+
+            throw new Error("Erro ao retornar abreviações");
+        }
+    }
 }

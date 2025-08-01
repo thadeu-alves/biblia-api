@@ -17,6 +17,19 @@ export async function dataRoutes(app: FastifyInstance) {
         }
     });
 
+    app.get("/abrev", async (_, reply) => {
+        try {
+            const data = await dataService.getBooksAbrev();
+            return reply.status(200).send({ data });
+        } catch (err) {
+            console.log(err);
+
+            return reply.status(500).send({
+                error: "Erro interno no servidor.",
+            });
+        }
+    });
+
     app.get("/:abrev", async (request, reply) => {
         try {
             const { abrev } = request.params as {
