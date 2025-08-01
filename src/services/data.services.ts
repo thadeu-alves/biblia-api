@@ -19,13 +19,17 @@ export class DataService {
     }
 
     async getBook(
-        abrev: string
+        id: string | number
     ): Promise<Book | undefined> {
         try {
             this.data = await this.loadData();
 
+            if (typeof id === "number") {
+                return this.data[id - 1];
+            }
+
             return this.data.find(
-                (book) => book.abrev === abrev
+                (book) => book.abrev === id
             );
         } catch (err) {
             console.error(err);

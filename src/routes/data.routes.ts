@@ -30,12 +30,14 @@ export async function dataRoutes(app: FastifyInstance) {
         }
     });
 
-    app.get("/:abrev", async (request, reply) => {
+    app.get("/:id", async (request, reply) => {
         try {
-            const { abrev } = request.params as {
-                abrev: string;
+            const { id } = request.params as {
+                id: string;
             };
-            const book = await dataService.getBook(abrev);
+            const book = await dataService.getBook(
+                isNaN(Number(id)) ? id : Number(id)
+            );
 
             if (!book) {
                 throw new Error("Livro não encontrado");
