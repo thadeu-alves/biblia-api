@@ -6,11 +6,10 @@ export async function readJsonFile<T>(
     filePath: string
 ): Promise<T> {
     try {
-        const absolutePath = path.resolve(
-            __dirname,
-            "../.",
-            filePath
-        );
+        const basePath = process.env.NODE_ENV
+            ? path.join(process.cwd(), "src")
+            : path.join(__dirname, "../");
+        const absolutePath = path.join(basePath, filePath);
         const rawData = await fs.readFile(
             absolutePath,
             "utf8"
