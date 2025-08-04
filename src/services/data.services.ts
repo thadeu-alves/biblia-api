@@ -18,26 +18,6 @@ export class DataService {
         }
     }
 
-    async getBook(
-        id: string | number
-    ): Promise<Book | undefined> {
-        try {
-            this.data = await this.loadData();
-
-            if (typeof id === "number") {
-                return this.data[id - 1];
-            }
-
-            return this.data.find(
-                (book) => book.abrev === id
-            );
-        } catch (err) {
-            console.error(err);
-
-            throw new Error("Erro ao procurar livro");
-        }
-    }
-
     async getBooksAbrev(): Promise<
         Pick<Book, "abrev" | "id" | "nome">[]
     > {
@@ -56,6 +36,40 @@ export class DataService {
             console.error(err);
 
             throw new Error("Erro ao retornar abreviações");
+        }
+    }
+
+    async getBook(
+        id: string | number
+    ): Promise<Book | undefined> {
+        try {
+            this.data = await this.loadData();
+
+            if (typeof id === "number") {
+                return this.data[id];
+            }
+
+            return this.data.find(
+                (book) => book.abrev === id
+            );
+        } catch (err) {
+            console.error(err);
+
+            throw new Error("Erro ao procurar livro");
+        }
+    }
+
+    async getBookChapter(
+        id: number | string,
+        chapter: number
+    ): Promise<string[]> {
+        try {
+            const book = await this.getBook(id);
+            return book?.capitulos[chapter] || [];
+        } catch (err) {
+            console.error(err);
+
+            throw new Error("Erro ao retornar capitulos");
         }
     }
 }

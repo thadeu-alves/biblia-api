@@ -36,7 +36,7 @@ export async function dataRoutes(app: FastifyInstance) {
                 id: string;
             };
             const book = await dataService.getBook(
-                isNaN(Number(id)) ? id : Number(id)
+                isNaN(Number(id)) ? id : Number(id) - 1
             );
 
             if (!book) {
@@ -54,4 +54,38 @@ export async function dataRoutes(app: FastifyInstance) {
             });
         }
     });
+
+    app.get(
+        "/livro/:id/:capitulo",
+        async (request, reply) => {
+            try {
+                const { id, capitulo } = request.params as {
+                    id: string;
+                    capitulo: string;
+                };
+
+                const data =
+                    await dataService.getBookChapter(
+                        isNaN(Number(id)) ? id : Number(id),
+                        Number(capitulo) - 1
+                    );
+
+                if (data.length === 0) {
+                    throw new Error(
+                        "Id não encontrado ou não especificado"
+                    );
+                }
+
+                return reply.status(200).send({
+                    data,
+                });
+            } catch (err) {
+                console.log(err);
+
+                return reply.status(400).send({
+                    error: "Capitulo não encontrado",
+                });
+            }
+        }
+    );
 }
