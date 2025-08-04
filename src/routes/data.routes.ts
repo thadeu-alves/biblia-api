@@ -30,7 +30,7 @@ export async function dataRoutes(app: FastifyInstance) {
         }
     });
 
-    app.get("/:id", async (request, reply) => {
+    app.get("/livro/:id", async (request, reply) => {
         try {
             const { id } = request.params as {
                 id: string;
