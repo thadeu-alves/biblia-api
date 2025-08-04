@@ -72,4 +72,22 @@ export class DataService {
             throw new Error("Erro ao retornar capitulos");
         }
     }
+
+    async getSingleVerse(
+        id: number | string,
+        chapter: number,
+        verse: number
+    ): Promise<string> {
+        try {
+            const chap = await this.getBookChapter(
+                id,
+                chapter
+            );
+            return chap[verse];
+        } catch (err) {
+            console.error(err);
+
+            throw new Error("Erro ao retornar capitulos");
+        }
+    }
 }

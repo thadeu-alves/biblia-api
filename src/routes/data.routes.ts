@@ -64,15 +64,34 @@ export async function dataRoutes(app: FastifyInstance) {
                     capitulo: string;
                 };
 
-                const data =
-                    await dataService.getBookChapter(
-                        isNaN(Number(id)) ? id : Number(id),
-                        Number(capitulo) - 1
-                    );
+                const { verse, range } = request.query as {
+                    verse?: string;
+                    range?: string;
+                };
 
-                if (data.length === 0) {
+                const bookId = isNaN(Number(id))
+                    ? id
+                    : Number(id);
+                const chapterIndex = Number(capitulo) - 1;
+
+                const data = verse
+                    ? await dataService.getSingleVerse(
+                          bookId,
+                          chapterIndex,
+                          Number(verse) - 1
+                      )
+                    : await dataService.getBookChapter(
+                          bookId,
+                          chapterIndex
+                      );
+
+                if (
+                    !data ||
+                    (Array.isArray(data) &&
+                        data.length === 0)
+                ) {
                     throw new Error(
-                        "Id não encontrado ou não especificado"
+                        "Conteudo encontrado ou não especificado"
                     );
                 }
 
@@ -83,7 +102,7 @@ export async function dataRoutes(app: FastifyInstance) {
                 console.log(err);
 
                 return reply.status(400).send({
-                    error: "Capitulo não encontrado",
+                    error: "Conteúdo não encontrado",
                 });
             }
         }
