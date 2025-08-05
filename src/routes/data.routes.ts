@@ -1,5 +1,6 @@
 import { FastifyInstance } from "fastify";
 import { DataService } from "../services/data.services";
+import { handleVerseRange } from "../utils/verseRange";
 
 export async function dataRoutes(app: FastifyInstance) {
     const dataService = new DataService();
@@ -74,7 +75,13 @@ export async function dataRoutes(app: FastifyInstance) {
                     : Number(id);
                 const chapterIndex = Number(capitulo) - 1;
 
-                const data = verse
+                const data = range
+                    ? await handleVerseRange(
+                          bookId,
+                          chapterIndex,
+                          range
+                      )
+                    : verse
                     ? await dataService.getSingleVerse(
                           bookId,
                           chapterIndex,

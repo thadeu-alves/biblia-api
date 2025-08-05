@@ -87,7 +87,27 @@ export class DataService {
         } catch (err) {
             console.error(err);
 
-            throw new Error("Erro ao retornar capitulos");
+            throw new Error("Erro ao retornar versiculo");
+        }
+    }
+
+    async getVersesRange(
+        id: string | number,
+        chapter: number,
+        start: number,
+        end: number
+    ): Promise<string[]> {
+        try {
+            const chap = await this.getBookChapter(
+                id,
+                chapter
+            );
+
+            return chap.slice(start, end);
+        } catch (err) {
+            console.error(err);
+
+            throw new Error("Erro ao retornar versiculos");
         }
     }
 }
