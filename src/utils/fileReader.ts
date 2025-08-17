@@ -1,6 +1,6 @@
 import path from "path";
 import fs from "fs/promises";
-import { Book } from "../types/data.types";
+import { RawBook } from "../types/data.types";
 
 export async function readJsonFile<T>(
     filePath: string
@@ -27,6 +27,6 @@ export async function readJsonFile<T>(
     }
 }
 
-export async function readDataFile(): Promise<Book[]> {
-    return readJsonFile<Book[]>("data/biblialivre.json");
+export async function readDataFile(): Promise<RawBook[]> {
+    return readJsonFile<RawBook[]>("data/biblialivre.json");
 }

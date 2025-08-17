@@ -1,4 +1,4 @@
-import { Book } from "../types/data.types";
+import { Book, RawBook } from "../types/data.types";
 import { readDataFile } from "../utils/fileReader";
 
 export class DataService {
@@ -8,7 +8,13 @@ export class DataService {
         try {
             if (this.data) return this.data;
 
-            this.data = await readDataFile();
+            const rawData = await readDataFile();
+            this.data = rawData.map((book) => {
+                return {
+                    ...book,
+                    capitulos: book.capitulos.length,
+                };
+            });
 
             return this.data;
         } catch (err) {
@@ -61,11 +67,17 @@ export class DataService {
 
     async getBookChapter(
         id: number | string,
-        chapter: number
+        chapterId: number
     ): Promise<string[]> {
         try {
-            const book = await this.getBook(id);
-            return book?.capitulos[chapter] || [];
+            const rawData = await readDataFile();
+            const chapter =
+                typeof id === "number"
+                    ? rawData[id]
+                    : rawData.find(
+                          (book) => book.abrev === id
+                      );
+            return chapter?.capitulos[chapterId] || [];
         } catch (err) {
             console.error(err);
 
