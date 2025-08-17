@@ -72,7 +72,7 @@ export async function dataRoutes(app: FastifyInstance) {
 
                 const bookId = isNaN(Number(id))
                     ? id
-                    : Number(id);
+                    : Number(id) - 1;
                 const chapterIndex = Number(capitulo) - 1;
 
                 const data = range
