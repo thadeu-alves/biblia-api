@@ -24,27 +24,6 @@ export class DataService {
         }
     }
 
-    async getBooksAbrev(): Promise<
-        Pick<Book, "abrev" | "id" | "nome">[]
-    > {
-        try {
-            this.data = await this.loadData();
-            const filtered = this.data.map(
-                ({ abrev, id, nome }) => ({
-                    abrev,
-                    id,
-                    nome,
-                })
-            );
-
-            return filtered;
-        } catch (err) {
-            console.error(err);
-
-            throw new Error("Erro ao retornar abreviações");
-        }
-    }
-
     async getBook(
         id: string | number
     ): Promise<Book | undefined> {

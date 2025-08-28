@@ -5,7 +5,7 @@ import { handleVerseRange } from "../utils/verseRange";
 export async function dataRoutes(app: FastifyInstance) {
     const dataService = new DataService();
 
-    app.get("/", async (_, reply) => {
+    app.get("/livros", async (_, reply) => {
         try {
             const data = await dataService.loadData();
             return reply.status(200).send({ data });
@@ -18,20 +18,7 @@ export async function dataRoutes(app: FastifyInstance) {
         }
     });
 
-    app.get("/abrev", async (_, reply) => {
-        try {
-            const data = await dataService.getBooksAbrev();
-            return reply.status(200).send({ data });
-        } catch (err) {
-            console.log(err);
-
-            return reply.status(500).send({
-                error: "Erro interno no servidor.",
-            });
-        }
-    });
-
-    app.get("/livro/:id", async (request, reply) => {
+    app.get("/livros/:id", async (request, reply) => {
         try {
             const { id } = request.params as {
                 id: string;
@@ -57,13 +44,14 @@ export async function dataRoutes(app: FastifyInstance) {
     });
 
     app.get(
-        "/livro/:id/:capitulo",
+        "/livros/:id/:capituloId",
         async (request, reply) => {
             try {
-                const { id, capitulo } = request.params as {
-                    id: string;
-                    capitulo: string;
-                };
+                const { id, capituloId } =
+                    request.params as {
+                        id: string;
+                        capituloId: string;
+                    };
 
                 const { verse, range } = request.query as {
                     verse?: string;
@@ -73,7 +61,7 @@ export async function dataRoutes(app: FastifyInstance) {
                 const bookId = isNaN(Number(id))
                     ? id
                     : Number(id) - 1;
-                const chapterIndex = Number(capitulo) - 1;
+                const chapterIndex = Number(capituloId) - 1;
 
                 const data = range
                     ? await handleVerseRange(
