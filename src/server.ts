@@ -1,6 +1,8 @@
 import fastify from "fastify";
 import fastifyCors from "@fastify/cors";
 import { routes } from "./routes";
+import fastifySwagger from "@fastify/swagger";
+import fastifySwaggerUi from "@fastify/swagger-ui";
 
 const app = fastify({
     logger: true,
@@ -10,6 +12,40 @@ app.register(fastifyCors, {
     origin: true,
     methods: ["GET", "PUT", "POST", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
+});
+
+app.register(fastifySwagger, {
+    openapi: {
+        info: {
+            title: "Bíblia RESTful API",
+            description: "Documentação da API",
+            version: "1.0.0",
+        },
+        servers: [
+            {
+                url: "https://bibliaapi.vercel.app/",
+                description: "Servidor de desenvolvimento",
+            },
+        ],
+        tags: [
+            {
+                name: "Livros",
+                description: "Endpoints de livros",
+            },
+            {
+                name: "Capítulos",
+                description: "Endpoints de capítulos",
+            },
+        ],
+    },
+});
+
+app.register(fastifySwaggerUi, {
+    routePrefix: "/",
+    uiConfig: {
+        docExpansion: "full",
+        deepLinking: false,
+    },
 });
 
 app.register(routes);
