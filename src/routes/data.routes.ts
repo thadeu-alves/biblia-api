@@ -6,6 +6,8 @@ import {
     bookSchema,
     chapterSchemas,
 } from "../utils/schemas";
+import z from "zod";
+import { console } from "inspector";
 
 export async function dataRoutes(app: FastifyInstance) {
     const dataService = new DataService();
@@ -34,15 +36,31 @@ export async function dataRoutes(app: FastifyInstance) {
         { schema: { ...bookSchema } },
         async (request, reply) => {
             try {
-                const { id } = request.params as {
-                    id: string;
-                };
+                const bookIdParams = z.object({
+                    id: z
+                        .string()
+                        .min(
+                            1,
+                            "O ID do Livro é obrigatório."
+                        ),
+                });
+
+                const { id } = bookIdParams.parse(
+                    request.params
+                );
+
+                const bookId = isNaN(Number(id))
+                    ? id
+                    : Number(id);
+
                 const book = await dataService.getBook(
-                    isNaN(Number(id)) ? id : Number(id) - 1
+                    bookId
                 );
 
                 if (!book) {
-                    throw new Error("Livro não encontrado");
+                    return reply.status(404).send({
+                        error: "Livro não encontrado",
+                    });
                 }
 
                 return reply.status(200).send({
@@ -51,7 +69,14 @@ export async function dataRoutes(app: FastifyInstance) {
             } catch (err) {
                 console.log(err);
 
-                return reply.status(400).send({
+                if (err instanceof z.ZodError) {
+                    return reply.status(400).send({
+                        error: err.issues[0].message,
+                        details: err.issues[0].code,
+                    });
+                }
+
+                return reply.status(404).send({
                     error: "Livro não encontrado",
                 });
             }
@@ -64,17 +89,40 @@ export async function dataRoutes(app: FastifyInstance) {
             schema: { ...chapterSchemas },
         },
         async (request, reply) => {
+            console.log("Chegou");
             try {
-                const { id, capituloId } =
-                    request.params as {
-                        id: string;
-                        capituloId: string;
-                    };
+                const chapterParams = z.object({
+                    id: z
+                        .string()
+                        .min(
+                            1,
+                            "O ID do Livro é obrigatório."
+                        ),
+                    capituloId: z
+                        .string()
+                        .min(
+                            1,
+                            "O ID do Capítulo é obrigatório."
+                        ),
+                });
 
-                const { verse, range } = request.query as {
-                    verse?: string;
-                    range?: string;
-                };
+                const chapterQuery = z.object({
+                    verse: z
+                        .string()
+                        .min(1, "Especifique um versículo.")
+                        .optional(),
+                    range: z
+                        .string()
+                        .min(1, "Especifique um intervalo.")
+                        .optional(),
+                });
+
+                const { id, capituloId } =
+                    chapterParams.parse(request.params);
+
+                const { verse, range } = chapterQuery.parse(
+                    request.query
+                );
 
                 const bookId = isNaN(Number(id))
                     ? id
@@ -104,7 +152,7 @@ export async function dataRoutes(app: FastifyInstance) {
                         data.length === 0)
                 ) {
                     throw new Error(
-                        "Conteudo encontrado ou não especificado"
+                        "Conteudo não encontrado"
                     );
                 }
 
@@ -114,7 +162,14 @@ export async function dataRoutes(app: FastifyInstance) {
             } catch (err) {
                 console.log(err);
 
-                return reply.status(400).send({
+                if (err instanceof z.ZodError) {
+                    return reply.status(400).send({
+                        error: err.issues[0].message,
+                        details: err.issues[0].code,
+                    });
+                }
+
+                return reply.status(404).send({
                     error: "Conteúdo não encontrado",
                 });
             }

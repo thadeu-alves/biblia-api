@@ -78,6 +78,13 @@ export const bookSchema = {
             type: "object",
             properties: {
                 error: { type: "string" },
+                details: { type: "string" },
+            },
+        },
+        404: {
+            type: "object",
+            properties: {
+                error: { type: "string" },
             },
         },
     },
@@ -110,11 +117,21 @@ export const chapterSchemas = {
                             type: "array",
                             items: { type: "string" },
                         },
+                        {
+                            type: "string",
+                        },
                     ],
                 },
             },
         },
         400: {
+            type: "object",
+            properties: {
+                error: { type: "string" },
+                details: { type: "string" },
+            },
+        },
+        404: {
             type: "object",
             properties: {
                 error: { type: "string" },
