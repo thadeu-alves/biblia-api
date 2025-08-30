@@ -1,92 +1,16 @@
 import { FastifyInstance } from "fastify";
 import { DataService } from "../services/data.services";
-import { handleVerseRange } from "../utils/verseRange";
-import {
-    allBooksloSchema,
-    bookSchema,
-    chapterSchemas,
-} from "../utils/schemas";
+import { chapterSchema } from "../utils/schemas";
 import z from "zod";
-import { console } from "inspector";
+import { handleVerseRange } from "../utils/verseRange";
 
-export async function dataRoutes(app: FastifyInstance) {
+export async function chapterRoute(app: FastifyInstance) {
     const dataService = new DataService();
-
-    app.get(
-        "/livros",
-        {
-            schema: { ...allBooksloSchema },
-        },
-        async (_, reply) => {
-            try {
-                const data = await dataService.loadData();
-                return reply.status(200).send({ data });
-            } catch (err) {
-                console.log(err);
-
-                return reply.status(500).send({
-                    error: "Erro interno no servidor.",
-                });
-            }
-        }
-    );
-
-    app.get(
-        "/livros/:id",
-        { schema: { ...bookSchema } },
-        async (request, reply) => {
-            try {
-                const bookIdParams = z.object({
-                    id: z
-                        .string()
-                        .min(
-                            1,
-                            "O ID do Livro é obrigatório."
-                        ),
-                });
-
-                const { id } = bookIdParams.parse(
-                    request.params
-                );
-
-                const bookId = isNaN(Number(id))
-                    ? id
-                    : Number(id);
-
-                const book = await dataService.getBook(
-                    bookId
-                );
-
-                if (!book) {
-                    return reply.status(404).send({
-                        error: "Livro não encontrado",
-                    });
-                }
-
-                return reply.status(200).send({
-                    data: book,
-                });
-            } catch (err) {
-                console.log(err);
-
-                if (err instanceof z.ZodError) {
-                    return reply.status(400).send({
-                        error: err.issues[0].message,
-                        details: err.issues[0].code,
-                    });
-                }
-
-                return reply.status(404).send({
-                    error: "Livro não encontrado",
-                });
-            }
-        }
-    );
 
     app.get(
         "/livros/:id/:capituloId",
         {
-            schema: { ...chapterSchemas },
+            schema: { ...chapterSchema },
         },
         async (request, reply) => {
             console.log("Chegou");

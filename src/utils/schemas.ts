@@ -1,4 +1,4 @@
-export const allBooksloSchemas = {
+export const allBooksloSchema = {
     summary: "Obter todos os livros",
     tags: ["Livros"],
     response: {
@@ -90,7 +90,7 @@ export const bookSchema = {
     },
 };
 
-export const chapterSchemas = {
+export const chapterSchema = {
     summary: "Obter capítulo ou versículos específicos",
     tags: ["Capítulos"],
     params: {
