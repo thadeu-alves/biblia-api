@@ -1,14 +1,22 @@
-# 📚 Documentação
+# 📚 Bíblia API
 
 Esta API fornece acesso a dados de livros, capítulos e versículos da bíblia.
 
----
+
+
+<div align="center">
+
+![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.8+-blue.svg)
+![Fastify](https://img.shields.io/badge/Fastify-5.4+-lightgrey.svg)
+
+</div>
 
 ## 🔍 Rotas
 
-### 1. **Obter todos os dados**
+### 1. **Obter todos os Livros**
 
-**GET** `/`
+**GET** `/livros`
 
 -   **Descrição:** Retorna todo o conteúdo estruturado.
 -   **Resposta de sucesso (200):**
@@ -23,44 +31,21 @@ Esta API fornece acesso a dados de livros, capítulos e versículos da bíblia.
       "abrev": "gn",
       "capitulos": 50,
     },
-    ...
-  ],
-}
-```
-
-### 2. **Obter todas as abreviações**
-
-**GET** `/abrev`
-
--   **Descrição:** Retorna todas as abreviações de cada livro.
--   **Resposta de sucesso (200):**
-
-```json
-{
-  "data": [
     {
-      "abrev": "gn",
-      "id": "1",
-      "nome": "Gênesis"
-    },
-    {
-      "abrev": "êx",
       "id": "2",
-      "nome": "Êxodo"
-    },
-    {
-      "abrev": "lv",
-      "id": "3",
-      "nome": "Levítico"
+      "periodo": "Antigo Testamento - AT",
+      "nome": "Êxodo",
+      "abrev": "êx",
+      "capitulos": 40,
     },
     ...
   ],
 }
 ```
 
-### 3. **Obter Livro**
+### 2. **Obter Livro específico**
 
-**GET** `/livro/:id`
+**GET** `/livros/:id`
 
 -   **Parâmetros de rota:**
     -   **id** (string | number) → Pode ser abreviação (ex: **Gn**) ou número (ex: **1**).
@@ -79,9 +64,9 @@ Esta API fornece acesso a dados de livros, capítulos e versículos da bíblia.
 }
 ```
 
-### 4. **Obter capítulo, versículo ou intervalo de versículos**
+### 3. **Obter capítulo, versículo ou intervalo de versículos**
 
-**GET** `/livro/:id/:capitulo`
+**GET** `/livros/:id/:capitulo`
 
 -   **Parâmetros de rota:**
     -   **id** (string | number) → Abreviação ou número do livro.
