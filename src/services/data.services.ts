@@ -1,20 +1,49 @@
-import { Book, RawBook } from "../types/data.types";
+import Redis from "ioredis";
+import { Book } from "../types/data.types";
 import { readDataFile } from "../utils/fileReader";
+import "dotenv/config";
 
 export class DataService {
-    private data: Book[] | null = null;
+    private data: Book[] | null;
+    private redis: Redis;
+
+    constructor() {
+        this.data = null;
+        this.redis = new Redis({
+            host: process.env.REDIS_HOST,
+            port: Number(process.env.REDIS_PORT),
+            username: process.env.REDIS_USERNAME,
+            password: process.env.REDIS_PASSWORD,
+        });
+    }
 
     async loadData(): Promise<Book[]> {
         try {
             if (this.data) return this.data;
 
+            const redisRaw = await this.redis.get("data");
+
+            if (redisRaw) {
+                const redisData = JSON.parse(
+                    redisRaw
+                ) as Book[];
+                this.data = redisData;
+                return this.data;
+            }
+
             const rawData = await readDataFile();
+
             this.data = rawData.map((book) => {
                 return {
                     ...book,
                     capitulos: book.capitulos.length,
                 };
             });
+
+            this.redis.set(
+                "data",
+                JSON.stringify(this.data)
+            );
 
             return this.data;
         } catch (err) {
