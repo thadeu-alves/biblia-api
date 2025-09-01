@@ -3,9 +3,30 @@ import { Book } from "../types/data.types";
 import { readDataFile } from "../utils/fileReader";
 import "dotenv/config";
 
-export class DataService {
+export interface IDataService {
+    setData(data: Book[]): void;
+    loadData(): Promise<Book[]>;
+    getBook(id: string | number): Promise<Book | undefined>;
+    getBookChapter(
+        id: number | string,
+        chapterId: number
+    ): Promise<string[]>;
+    getSingleVerse(
+        id: number | string,
+        chapter: number,
+        verse: number
+    ): Promise<string>;
+    getVersesRange(
+        id: string | number,
+        chapter: number,
+        start: number,
+        end: number
+    ): Promise<string[]>;
+}
+
+export class DataService implements IDataService {
     private data: Book[] | null;
-    private redis: Redis;
+    protected redis: Redis;
 
     constructor() {
         this.data = null;
@@ -15,6 +36,10 @@ export class DataService {
             username: process.env.REDIS_USERNAME,
             password: process.env.REDIS_PASSWORD,
         });
+    }
+
+    setData(data: Book[]) {
+        this.data = data;
     }
 
     async loadData(): Promise<Book[]> {
