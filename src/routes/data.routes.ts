@@ -4,7 +4,7 @@ import { handleVerseRange } from "../utils/verseRange";
 import {
     allBooksloSchema,
     bookSchema,
-    chapterSchemas,
+    chapterSchema,
 } from "../utils/schemas";
 import z from "zod";
 import { console } from "inspector";
@@ -86,7 +86,7 @@ export async function dataRoutes(app: FastifyInstance) {
     app.get(
         "/livros/:id/:capituloId",
         {
-            schema: { ...chapterSchemas },
+            schema: { ...chapterSchema },
         },
         async (request, reply) => {
             console.log("Chegou");
