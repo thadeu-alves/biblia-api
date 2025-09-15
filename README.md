@@ -1,16 +1,38 @@
-# 📚 Bíblia API
+<p align="center">
+  <img src="https://bibliapage.vercel.app/favicon.svg" width="140px" />
+</p>
 
-Esta API fornece acesso a dados de livros, capítulos e versículos da bíblia.
-
-
+<h1 align="center">Bíblia API</h1>
+<p align="center">Uma API que fornece acesso a dados de livros, capítulos e versículos da bíblia.</p>
+<p align="center">https://bibliaapi.vercel.app</p>
 
 <div align="center">
 
 ![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.8+-blue.svg)
 ![Fastify](https://img.shields.io/badge/Fastify-5.4+-lightgrey.svg)
+![Redis](https://img.shields.io/badge/Redis-5.7+-red.svg)
 
 </div>
+
+
+# Instalação
+
+- [Demo](https://bibliapage.vercel.app)
+
+Clone o repositório na sua máquina
+```sh
+git clone https://github.com/thadeu-alves/biblia-api
+```
+Instale as depedências
+```node
+npm install
+```
+Inicie o servidor
+```node
+npm run dev
+```
+
 
 ## 🔍 Rotas
 
@@ -90,3 +112,14 @@ Esta API fornece acesso a dados de livros, capítulos e versículos da bíblia.
   ]
 }
 ```
+
+# Autor
+
+👤 **Thadeu Alves**
+
+- Github: [@thadeu-alves](https://github.com/thadeu-alves)
+- LinkedIn: [@thadeualves](https://linkedin.com/in/thadeualves)
+
+## Apoie
+
+Deixe uma ⭐️ se esse projeto te ajudou!
