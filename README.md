@@ -12,26 +12,36 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.8+-blue.svg)
 ![Fastify](https://img.shields.io/badge/Fastify-5.4+-lightgrey.svg)
 ![Redis](https://img.shields.io/badge/Redis-5.7+-red.svg)
+![Vitest](https://img.shields.io/badge/Vitest-3.2+-yellow.svg)
 
 </div>
 
 
-# Instalação
+# Instalação e Scripts
 
 - [Demo](https://bibliapage.vercel.app)
 
-Clone o repositório na sua máquina
-```sh
-git clone https://github.com/thadeu-alves/biblia-api
+Antes de começar, tenha certeza que você tem o [Git](https://git-scm.com) e o [Node](https://nodejs.org/en/) instalado no seu sistema.
+
+```bash
+# Clone o repositório na sua máquina
+$ git clone https://github.com/thadeu-alves/biblia-api
+
+# Entre na pasta
+$ cd biblia-api
+
+# Instale as depedências
+$ npm install
+
+# Inicie o servidor
+$ npm run dev
+
+# O servidor será inicializado na porta padrão <http://localhost:3000>
 ```
-Instale as depedências
-```node
-npm install
-```
-Inicie o servidor
-```node
-npm run dev
-```
+- `dev`: inicia a aplicação em `localhost:3000`;
+- `build`: cria a build de produção otimizada;
+- `start`: inicia a aplicação em modo de produção em localhost:3000 (rode a build primeiro);
+- `test`: roda os testes;
 
 
 ## 🔍 Rotas
