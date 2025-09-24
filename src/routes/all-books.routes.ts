@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
 import { DataService } from "../services/data.services";
-import { allBooksloSchema } from "../utils/schemas";
+import { allBooksSchema } from "../utils/schemas";
 
 export async function allBooksRoute(app: FastifyInstance) {
     const dataService = new DataService();
@@ -8,12 +8,15 @@ export async function allBooksRoute(app: FastifyInstance) {
     app.get(
         "/livros",
         {
-            schema: { ...allBooksloSchema },
+            schema: { ...allBooksSchema },
         },
         async (_, reply) => {
             try {
                 const data = await dataService.loadData();
-                return reply.status(200).send({ data });
+
+                return reply.status(200).send({
+                    data: Array.from(data.values()),
+                });
             } catch (err) {
                 console.log(err);
 

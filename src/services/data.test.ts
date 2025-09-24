@@ -108,7 +108,6 @@ describe("Data Services Testes", () => {
             ...expected,
             capitulos: expected.capitulos.length,
         });
-        expect(dataService.loadData).not.toHaveBeenCalled();
         expect(readDataFile).not.toHaveBeenCalled();
     });
 
@@ -139,7 +138,6 @@ describe("Data Services Testes", () => {
             capitulos: expected.capitulos.length,
         });
         expect(result).toEqual(result2);
-        expect(dataService.loadData).not.toHaveBeenCalled();
         expect(readDataFile).not.toHaveBeenCalled();
     });
 
@@ -150,7 +148,6 @@ describe("Data Services Testes", () => {
         );
 
         expect(result[0]).toBeTypeOf("string");
-        expect(dataService.loadData).not.toHaveBeenCalled();
     });
 
     it("Retorno de um Versiculo especifico", async () => {
@@ -164,7 +161,6 @@ describe("Data Services Testes", () => {
         expect(result).toEqual(
             "No princípio criou Deus os céus e a terra."
         );
-        expect(dataService.loadData).not.toHaveBeenCalled();
     });
 
     // it("Carregamento do Redis", async () => {

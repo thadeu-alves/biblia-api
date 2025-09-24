@@ -13,7 +13,6 @@ export async function chapterRoute(app: FastifyInstance) {
             schema: { ...chapterSchema },
         },
         async (request, reply) => {
-            console.log("Chegou");
             try {
                 const chapterParams = z.object({
                     id: z
@@ -48,25 +47,22 @@ export async function chapterRoute(app: FastifyInstance) {
                     request.query
                 );
 
-                const bookId = isNaN(Number(id))
-                    ? id
-                    : Number(id) - 1;
                 const chapterIndex = Number(capituloId) - 1;
 
                 const data = range
                     ? await handleVerseRange(
-                          bookId,
+                          id,
                           chapterIndex,
                           range
                       )
                     : verse
                     ? await dataService.getSingleVerse(
-                          bookId,
+                          id,
                           chapterIndex,
                           Number(verse) - 1
                       )
                     : await dataService.getBookChapter(
-                          bookId,
+                          id,
                           chapterIndex
                       );
 

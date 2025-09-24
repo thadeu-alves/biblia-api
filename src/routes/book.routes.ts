@@ -24,13 +24,7 @@ export async function bookRoute(app: FastifyInstance) {
                     request.params
                 );
 
-                const bookId = isNaN(Number(id))
-                    ? id
-                    : Number(id);
-
-                const book = await dataService.getBook(
-                    bookId
-                );
+                const book = await dataService.getBook(id);
 
                 if (!book) {
                     return reply.status(404).send({

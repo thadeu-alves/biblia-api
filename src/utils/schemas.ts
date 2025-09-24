@@ -1,4 +1,6 @@
-export const allBooksloSchema = {
+import { array } from "zod";
+
+export const allBooksSchema = {
     summary: "Obter todos os livros",
     tags: ["Livros"],
     response: {
@@ -23,7 +25,13 @@ export const allBooksloSchema = {
                                         type: "string",
                                     },
                                     capitulos: {
-                                        type: "number",
+                                        type: "array",
+                                        items: {
+                                            type: "array",
+                                            items: {
+                                                type: "string",
+                                            },
+                                        },
                                     },
                                 },
                             },

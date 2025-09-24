@@ -26,7 +26,7 @@ export interface IDataService {
 }
 
 export class DataService implements IDataService {
-    private data: Map<string | number, RawBook> | null;
+    private data: Map<string | number, RawBook>;
     protected redis: Redis;
 
     constructor() {
@@ -47,8 +47,9 @@ export class DataService implements IDataService {
         Map<string | number, RawBook>
     > {
         try {
-            if (this.data) return this.data;
-
+            if (Array.from(this.data.values()).length > 0) {
+                return this.data;
+            }
             // const redisRaw = await this.redis.get("data");
 
             // if (redisRaw) {
@@ -61,9 +62,13 @@ export class DataService implements IDataService {
 
             const rawData = await readDataFile();
 
+            if (!rawData) {
+                throw new Error("Falha ao ler arquivo.");
+            }
+
             rawData.map((rbook) => {
-                this.data?.set(rbook.id, rbook);
-                this.data?.set(rbook.abrev, rbook);
+                this.data.set(rbook.id, rbook);
+                this.data.set(rbook.abrev, rbook);
             });
 
             this.redis.set(
@@ -83,9 +88,7 @@ export class DataService implements IDataService {
         id: string | number
     ): Promise<Book | undefined> {
         try {
-            if (!this.data) {
-                this.data = await this.loadData();
-            }
+            this.data = await this.loadData();
 
             const book = this.data.get(id);
 
@@ -109,9 +112,7 @@ export class DataService implements IDataService {
         chapterId: number
     ): Promise<string[]> {
         try {
-            if (!this.data) {
-                this.data = await this.loadData();
-            }
+            this.data = await this.loadData();
 
             const book = this.data.get(id);
 
