@@ -1,16 +1,48 @@
-# 📚 Bíblia API
+<p align="center">
+  <img src="https://bibliapage.vercel.app/favicon.svg" width="140px" />
+</p>
 
-Esta API fornece acesso a dados de livros, capítulos e versículos da bíblia.
-
-
+<h1 align="center">Bíblia API</h1>
+<p align="center">Uma API que fornece acesso a dados de livros, capítulos e versículos da bíblia.</p>
+<p align="center">https://bibliaapi.vercel.app</p>
 
 <div align="center">
 
 ![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.8+-blue.svg)
 ![Fastify](https://img.shields.io/badge/Fastify-5.4+-lightgrey.svg)
+![Redis](https://img.shields.io/badge/Redis-5.7+-red.svg)
+![Vitest](https://img.shields.io/badge/Vitest-3.2+-yellow.svg)
 
 </div>
+
+
+# Instalação e Scripts
+
+- [Demo](https://bibliapage.vercel.app)
+
+Antes de começar, tenha certeza que você tem o [Git](https://git-scm.com) e o [Node](https://nodejs.org/en/) instalado no seu sistema.
+
+```bash
+# Clone o repositório na sua máquina
+$ git clone https://github.com/thadeu-alves/biblia-api
+
+# Entre na pasta
+$ cd biblia-api
+
+# Instale as depedências
+$ npm install
+
+# Inicie o servidor
+$ npm run dev
+
+# O servidor será inicializado na porta padrão <http://localhost:3000>
+```
+- `dev`: inicia a aplicação em `localhost:3000`;
+- `build`: cria a build de produção otimizada;
+- `start`: inicia a aplicação em modo de produção em localhost:3000 (rode a build primeiro);
+- `test`: roda os testes;
+
 
 ## 🔍 Rotas
 
@@ -90,3 +122,14 @@ Esta API fornece acesso a dados de livros, capítulos e versículos da bíblia.
   ]
 }
 ```
+
+# Autor
+
+👤 **Thadeu Alves**
+
+- Github: [@thadeu-alves](https://github.com/thadeu-alves)
+- LinkedIn: [@thadeualves](https://linkedin.com/in/thadeualves)
+
+## Apoie
+
+Deixe uma ⭐️ se esse projeto te ajudou!
