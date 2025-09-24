@@ -3,7 +3,7 @@ export interface RawBook {
     periodo: string;
     nome: string;
     abrev: string;
-    capitulos: [[string]];
+    capitulos: [string[]];
 }
 
 export interface Book {

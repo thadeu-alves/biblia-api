@@ -2,6 +2,7 @@ import Redis from "ioredis";
 import { Book, RawBook } from "../types/data.types";
 import { readDataFile } from "../utils/fileReader";
 import "dotenv/config";
+import { da } from "zod/v4/locales/index.cjs";
 
 export interface IDataService {
     setData(data: Map<string | number, RawBook>): void;
@@ -108,14 +109,21 @@ export class DataService implements IDataService {
         chapterId: number
     ): Promise<string[]> {
         try {
-            const rawData = await readDataFile();
-            const chapter =
-                typeof id === "number"
-                    ? rawData[id]
-                    : rawData.find(
-                          (book) => book.abrev === id
-                      );
-            return chapter?.capitulos[chapterId] || [];
+            if (!this.data) {
+                this.data = await this.loadData();
+            }
+
+            const book = this.data.get(id);
+
+            if (!book)
+                throw new Error("Livro não encontrado");
+
+            const chapter = book.capitulos[chapterId];
+
+            if (!chapter)
+                throw new Error("Capítulo não encontrado");
+
+            return chapter;
         } catch (err) {
             console.error(err);
 

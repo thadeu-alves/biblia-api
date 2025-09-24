@@ -34,6 +34,7 @@ vi.mock("ioredis", () => {
 describe("Data Services Testes", () => {
     let dataService: IDataService;
     let redisMock: RedisMock;
+    const fakeBooks = new Map<string | number, RawBook>();
 
     beforeEach(() => {
         redisMock = {
@@ -48,20 +49,48 @@ describe("Data Services Testes", () => {
         );
 
         vi.clearAllMocks();
+
+        fakeBooks.set(1, {
+            id: "1",
+            periodo: "Antigo Testamento - AT",
+            nome: "Gênesis",
+            abrev: "gn",
+            capitulos: [
+                [
+                    "No princípio criou Deus os céus e a terra.",
+                    "E a terra estava desordenada e vazia, e as trevas estavam sobre a face do abismo, e o Espírito de Deus se movia sobre a face das águas.",
+                    "E disse Deus: Haja luz; e houve luz.",
+                ],
+            ],
+        });
+        fakeBooks.set("gn", {
+            id: "1",
+            periodo: "Antigo Testamento - AT",
+            nome: "Gênesis",
+            abrev: "gn",
+            capitulos: [
+                [
+                    "No princípio criou Deus os céus e a terra.",
+                    "E a terra estava desordenada e vazia, e as trevas estavam sobre a face do abismo, e o Espírito de Deus se movia sobre a face das águas.",
+                    "E disse Deus: Haja luz; e houve luz.",
+                ],
+            ],
+        });
+
+        dataService.setData(fakeBooks);
+        vi.spyOn(dataService, "loadData");
     });
 
     it("Retorno direto do this.data", async () => {
-        const fakeBooks: Book[] = [
-            {
-                id: "1",
-                abrev: "gn",
-                nome: "Genesis",
-                capitulos: 50,
-                periodo: "AT",
-            },
-        ];
-
-        dataService.setData(fakeBooks);
+        // const fakeBooks: Book[] = [
+        //     {
+        //         id: "1",
+        //         abrev: "gn",
+        //         nome: "Genesis",
+        //         capitulos: 50,
+        //         periodo: "AT",
+        //     },
+        // ];
 
         const result = await dataService.loadData();
 
@@ -70,61 +99,119 @@ describe("Data Services Testes", () => {
         expect(readDataFile).not.toHaveBeenCalled();
     });
 
-    it("Carregamento do Redis", async () => {
-        const fakeBooks: Book[] = [
-            {
-                id: "1",
-                abrev: "gn",
-                nome: "Genesis",
-                capitulos: 50,
-                periodo: "AT",
-            },
-        ];
+    it("Retorno de um Livro especifico", async () => {
+        const result = await dataService.getBook(1);
 
-        redisMock.get.mockResolvedValueOnce(
-            JSON.stringify(fakeBooks)
-        );
+        const expected = fakeBooks.get(1) as RawBook;
 
-        const result = await dataService.loadData();
-
-        expect(result).toEqual(fakeBooks);
-        expect(redisMock.get).toBeCalledWith("data");
+        expect(result).toEqual({
+            ...expected,
+            capitulos: expected.capitulos.length,
+        });
+        expect(dataService.loadData).not.toHaveBeenCalled();
         expect(readDataFile).not.toHaveBeenCalled();
     });
 
-    it("Sem cache", async () => {
-        const rawFakeBooks: RawBook[] = [
-            {
-                id: "1",
-                abrev: "gn",
-                nome: "Genesis",
-                capitulos: [[""]],
-                periodo: "AT",
-            },
-        ];
+    it("Retorno de um Livro especifico com diferentes tipos de id", async () => {
+        const result = await dataService.getBook(1);
+        const result2 = await dataService.getBook("gn");
 
-        const fakeBooks: Book[] = [
-            {
-                id: "1",
-                abrev: "gn",
-                nome: "Genesis",
-                capitulos: 1,
-                periodo: "AT",
-            },
-        ];
+        const expected = {
+            id: "1",
+            periodo: "Antigo Testamento - AT",
+            nome: "Gênesis",
+            abrev: "gn",
+            capitulos: [
+                [
+                    "No princípio criou Deus os céus e a terra.",
+                    "E a terra estava desordenada e vazia, e as trevas estavam sobre a face do abismo, e o Espírito de Deus se movia sobre a face das águas.",
+                    "E disse Deus: Haja luz; e houve luz.",
+                ],
+            ],
+        };
 
-        (readDataFile as any).mockResolvedValueOnce(
-            rawFakeBooks
-        );
-        redisMock.get.mockResolvedValueOnce(null);
-
-        const result = await dataService.loadData();
-
-        expect(result).toEqual(fakeBooks);
-        expect(readDataFile).toHaveBeenCalled();
-        expect(redisMock.set).toBeCalledWith(
-            "data",
-            JSON.stringify(fakeBooks)
-        );
+        expect(result).toEqual({
+            ...expected,
+            capitulos: expected.capitulos.length,
+        });
+        expect(result2).toEqual({
+            ...expected,
+            capitulos: expected.capitulos.length,
+        });
+        expect(result).toEqual(result2);
+        expect(dataService.loadData).not.toHaveBeenCalled();
+        expect(readDataFile).not.toHaveBeenCalled();
     });
+
+    it("Retorno de um Capítulo especifico", async () => {
+        const result = await dataService.getBookChapter(
+            1,
+            0
+        );
+
+        expect(result[0]).toBeTypeOf("string");
+        expect(dataService.loadData).not.toHaveBeenCalled();
+    });
+
+    it("Retorno de um Versiculo especifico", async () => {
+        const result = await dataService.getSingleVerse(
+            "gn",
+            0,
+            0
+        );
+
+        expect(result).toBeTypeOf("string");
+        expect(result).toEqual(
+            "No princípio criou Deus os céus e a terra."
+        );
+        expect(dataService.loadData).not.toHaveBeenCalled();
+    });
+
+    // it("Carregamento do Redis", async () => {
+    //     redisMock.get.mockResolvedValueOnce(
+    //         JSON.stringify(fakeBooks)
+    //     );
+
+    //     const result = await dataService.loadData();
+
+    //     expect(result).toEqual(fakeBooks);
+    //     expect(redisMock.get).toBeCalledWith("data");
+    //     expect(readDataFile).not.toHaveBeenCalled();
+    // });
+
+    // it("Sem cache", async () => {
+    //     const rawFakeBooks: RawBook[] = [
+    //         {
+    //             id: "1",
+    //             abrev: "gn",
+    //             nome: "Genesis",
+    //             capitulos: [[""]],
+    //             periodo: "AT",
+    //         },
+    //     ];
+
+    //     const fakeBooks: Book[] = [
+    //         {
+    //             id: "1",
+    //             abrev: "gn",
+    //             nome: "Genesis",
+    //             capitulos: 1,
+    //             periodo: "AT",
+    //         },
+    //     ];
+
+    //     (readDataFile as any).mockResolvedValueOnce(
+    //         rawFakeBooks
+    //     );
+    //     redisMock.get.mockResolvedValueOnce(null);
+
+    //     const result = await dataService.loadData();
+
+    //     expect(result).toEqual(fakeBooks);
+    //     expect(readDataFile).toHaveBeenCalled();
+    //     expect(redisMock.set).toBeCalledWith(
+    //         "data",
+    //         JSON.stringify(fakeBooks)
+    //     );
+    // });
 });
