@@ -1,11 +1,11 @@
 import Redis from "ioredis";
-import { Book } from "../types/data.types";
+import { Book, RawBook } from "../types/data.types";
 import { readDataFile } from "../utils/fileReader";
 import "dotenv/config";
 
 export interface IDataService {
-    setData(data: Book[]): void;
-    loadData(): Promise<Book[]>;
+    setData(data: Map<string | number, RawBook>): void;
+    loadData(): Promise<Map<string | number, RawBook>>;
     getBook(id: string | number): Promise<Book | undefined>;
     getBookChapter(
         id: number | string,
@@ -25,11 +25,11 @@ export interface IDataService {
 }
 
 export class DataService implements IDataService {
-    private data: Book[] | null;
+    private data: Map<string | number, RawBook> | null;
     protected redis: Redis;
 
     constructor() {
-        this.data = null;
+        this.data = new Map<string | number, RawBook>();
         this.redis = new Redis({
             host: process.env.REDIS_HOST,
             port: Number(process.env.REDIS_PORT),
@@ -38,31 +38,31 @@ export class DataService implements IDataService {
         });
     }
 
-    setData(data: Book[]) {
+    setData(data: Map<string | number, RawBook>) {
         this.data = data;
     }
 
-    async loadData(): Promise<Book[]> {
+    async loadData(): Promise<
+        Map<string | number, RawBook>
+    > {
         try {
             if (this.data) return this.data;
 
-            const redisRaw = await this.redis.get("data");
+            // const redisRaw = await this.redis.get("data");
 
-            if (redisRaw) {
-                const redisData = JSON.parse(
-                    redisRaw
-                ) as Book[];
-                this.data = redisData;
-                return this.data;
-            }
+            // if (redisRaw) {
+            //     const redisData = JSON.parse(
+            //         redisRaw
+            //     ) as Map<string | number, Book>;
+            //     this.data = redisData;
+            //     return this.data;
+            // }
 
             const rawData = await readDataFile();
 
-            this.data = rawData.map((book) => {
-                return {
-                    ...book,
-                    capitulos: book.capitulos.length,
-                };
+            rawData.map((rbook) => {
+                this.data?.set(rbook.id, rbook);
+                this.data?.set(rbook.abrev, rbook);
             });
 
             this.redis.set(
@@ -70,7 +70,7 @@ export class DataService implements IDataService {
                 JSON.stringify(this.data)
             );
 
-            return this.data;
+            return this.data || new Map();
         } catch (err) {
             console.error(err);
 
@@ -82,15 +82,20 @@ export class DataService implements IDataService {
         id: string | number
     ): Promise<Book | undefined> {
         try {
-            this.data = await this.loadData();
-
-            if (typeof id === "number") {
-                return this.data[id];
+            if (!this.data) {
+                this.data = await this.loadData();
             }
 
-            return this.data.find(
-                (book) => book.abrev === id
-            );
+            const book = this.data.get(id);
+
+            if (!book) {
+                throw new Error("Livro não encontrado.");
+            }
+
+            return {
+                ...book,
+                capitulos: book?.capitulos.length || 0,
+            };
         } catch (err) {
             console.error(err);
 
