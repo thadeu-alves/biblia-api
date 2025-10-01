@@ -25,13 +25,7 @@ export const allBooksSchema = {
                                         type: "string",
                                     },
                                     capitulos: {
-                                        type: "array",
-                                        items: {
-                                            type: "array",
-                                            items: {
-                                                type: "string",
-                                            },
-                                        },
+                                        type: "number",
                                     },
                                 },
                             },
