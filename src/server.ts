@@ -52,9 +52,9 @@ app.register(routes);
 
 const start = async () => {
     try {
-        await app.listen({ port: 3000 });
+        await app.listen({ port: 5000 });
         console.log(
-            "Server listening on http://localhost:3000"
+            "Server listening on http://localhost:5000",
         );
     } catch (err) {
         app.log.error(err);

@@ -1,5 +1,9 @@
 import Redis from "ioredis";
-import { Book, RawBook } from "../types/data.types";
+import {
+    Book,
+    Chapter,
+    RawBook,
+} from "../types/data.types";
 import { readDataFile } from "../utils/fileReader";
 import "dotenv/config";
 import { da } from "zod/v4/locales/index.cjs";
@@ -10,18 +14,18 @@ export interface IDataService {
     getBook(id: string | number): Promise<Book | undefined>;
     getBookChapter(
         id: number | string,
-        chapterId: number
-    ): Promise<string[]>;
+        chapterId: number,
+    ): Promise<Chapter>;
     getSingleVerse(
         id: number | string,
         chapter: number,
-        verse: number
+        verse: number,
     ): Promise<string>;
     getVersesRange(
         id: string | number,
         chapter: number,
         start: number,
-        end: number
+        end: number,
     ): Promise<string[]>;
 }
 
@@ -73,7 +77,7 @@ export class DataService implements IDataService {
 
             this.redis.set(
                 "data",
-                JSON.stringify(this.data)
+                JSON.stringify(this.data),
             );
 
             return this.data || new Map();
@@ -85,7 +89,7 @@ export class DataService implements IDataService {
     }
 
     async getBook(
-        id: string | number
+        id: string | number,
     ): Promise<Book | undefined> {
         try {
             this.data = await this.loadData();
@@ -109,8 +113,8 @@ export class DataService implements IDataService {
 
     async getBookChapter(
         id: number | string,
-        chapterId: number
-    ): Promise<string[]> {
+        chapterId: number,
+    ): Promise<Chapter> {
         try {
             this.data = await this.loadData();
 
@@ -124,7 +128,15 @@ export class DataService implements IDataService {
             if (!chapter)
                 throw new Error("Capítulo não encontrado");
 
-            return chapter;
+            return {
+                verses: chapter,
+                hasNext: book.capitulos[chapterId + 1]
+                    ? true
+                    : false,
+                hasPrevious: book.capitulos[chapterId - 1]
+                    ? true
+                    : false,
+            };
         } catch (err) {
             console.error(err);
 
@@ -135,14 +147,14 @@ export class DataService implements IDataService {
     async getSingleVerse(
         id: number | string,
         chapter: number,
-        verse: number
+        verse: number,
     ): Promise<string> {
         try {
             const chap = await this.getBookChapter(
                 id,
-                chapter
+                chapter,
             );
-            return chap[verse];
+            return chap.verses[verse];
         } catch (err) {
             console.error(err);
 
@@ -154,15 +166,15 @@ export class DataService implements IDataService {
         id: string | number,
         chapter: number,
         start: number,
-        end: number
+        end: number,
     ): Promise<string[]> {
         try {
             const chap = await this.getBookChapter(
                 id,
-                chapter
+                chapter,
             );
 
-            return chap.slice(start, end);
+            return chap.verses.slice(start, end);
         } catch (err) {
             console.error(err);
 

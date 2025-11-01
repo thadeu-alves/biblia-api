@@ -13,3 +13,9 @@ export interface Book {
     abrev: string;
     capitulos: number;
 }
+
+export interface Chapter {
+    verses: string[];
+    hasNext: boolean;
+    hasPrevious: boolean;
+}

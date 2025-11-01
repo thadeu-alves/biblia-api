@@ -116,8 +116,21 @@ export const chapterSchema = {
                 data: {
                     oneOf: [
                         {
-                            type: "array",
-                            items: { type: "string" },
+                            type: "object",
+                            properties: {
+                                verses: {
+                                    type: "array",
+                                    items: {
+                                        type: "string",
+                                    },
+                                },
+                                hasNext: {
+                                    type: "boolean",
+                                },
+                                hasPrevious: {
+                                    type: "boolean",
+                                },
+                            },
                         },
                         {
                             type: "string",
